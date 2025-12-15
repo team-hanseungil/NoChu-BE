@@ -1,4 +1,4 @@
-package team.hanseungil.nochu.domain.auth.presentation.dto
+package team.hanseungil.nochu.domain.auth.presentation.dto.request
 
 import jakarta.validation.constraints.NotBlank
 
