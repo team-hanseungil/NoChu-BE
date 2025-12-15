@@ -9,7 +9,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
-import team.hanseungil.nochu.global.error.GlobalException
 import java.time.LocalDateTime
 
 @RestControllerAdvice
