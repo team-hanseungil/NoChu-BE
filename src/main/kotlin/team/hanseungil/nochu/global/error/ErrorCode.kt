@@ -16,4 +16,11 @@ enum class ErrorCode(
     
     // Music
     MUSIC_NOT_FOUND("음악 정보를 찾을 수 없습니다.", 404),
+
+    // File
+    FILE_EMPTY("파일이 비어 있습니다.", 400),
+    FILE_NOT_FOUND("파일을 찾을 수 없습니다.", 404),
+    FILE_EXTENSION_NOT_FOUND("파일 확장자를 찾을 수 없습니다.", 400),
+    FILE_EXTENSION_NOT_ALLOWED("허용되지 않은 파일 확장자입니다.", 400),
+
 }
