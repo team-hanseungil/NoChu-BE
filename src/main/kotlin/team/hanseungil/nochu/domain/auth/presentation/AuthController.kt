@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import team.hanseungil.nochu.domain.auth.dto.AuthResponse
-import team.hanseungil.nochu.domain.auth.dto.SignInRequest
-import team.hanseungil.nochu.domain.auth.dto.SignUpRequest
+import team.hanseungil.nochu.domain.auth.presentation.dto.response.AuthResponse
+import team.hanseungil.nochu.domain.auth.presentation.dto.request.SignInRequest
+import team.hanseungil.nochu.domain.auth.presentation.dto.request.SignUpRequest
 import team.hanseungil.nochu.domain.auth.service.SignInService
 import team.hanseungil.nochu.domain.auth.service.SignUpService
 

@@ -1,6 +1,9 @@
 # Build stage
-FROM gradle:8.5-jdk24-alpine AS build
+FROM eclipse-temurin:24-jdk-alpine AS build
 WORKDIR /app
+
+# Install Gradle
+RUN apk add --no-cache gradle
 
 # Copy gradle files
 COPY build.gradle.kts settings.gradle.kts ./
