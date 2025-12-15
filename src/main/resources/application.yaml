@@ -34,3 +34,7 @@ cloud:
       bucket: ${AWS_BUCKET}
     stack:
       auto: false
+
+external:
+  emotion:
+    url: ${EMOTION_API_URL}
