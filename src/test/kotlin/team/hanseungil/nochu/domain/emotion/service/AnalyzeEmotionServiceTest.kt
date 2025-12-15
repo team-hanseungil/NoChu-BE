@@ -37,9 +37,10 @@ class AnalyzeEmotionServiceTest : BehaviorSpec({
                     val memberId = 1L
                     val image = mockk<MultipartFile>()
                     val response = AnalyzeEmotionResponse(
-                        AnalyzeEmotionResponse.Emotions(0.8, 0.1, 0.02, 0.03, 0.02, 0.03),
-                        "행복",
-                        "테스트"
+                        emotions = AnalyzeEmotionResponse.Emotions(0.8, 0.1, 0.02, 0.03, 0.02, 0.03),
+                        emotion = "행복",
+                        comment = "테스트",
+                        imageUrl = "https://s3.com/test.jpg"
                     )
 
                     every { memberJpaRepository.existsById(memberId) } returns true
