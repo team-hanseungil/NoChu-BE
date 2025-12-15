@@ -1,11 +1,11 @@
-package team.hanseungil.nochu.domain.emotion.mapper
+package team.hanseungil.nochu.domain.emotion.convert
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
 
 @Converter
-class EmotionMapMapper : AttributeConverter<Map<String, Double>, String> {
+class EmotionMapConvert : AttributeConverter<Map<String, Double>, String> {
     private val mapper = ObjectMapper()
 
     override fun convertToDatabaseColumn(attribute: Map<String, Double>?): String {
