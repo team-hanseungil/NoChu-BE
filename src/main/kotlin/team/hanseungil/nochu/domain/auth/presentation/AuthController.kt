@@ -23,7 +23,7 @@ class AuthController(
     @PostMapping("/signup")
     fun signUp(@Valid @RequestBody request: SignUpRequest): ResponseEntity<AuthResponse> {
         val memberId = signUpService.execute(request.nickname, request.password)
-        return ResponseEntity.status(HttpStatus.CREATED).body(AuthResponse(memberId))
+        return ResponseEntity.ok().body(AuthResponse(memberId))
     }
     
     @PostMapping("/signin")
