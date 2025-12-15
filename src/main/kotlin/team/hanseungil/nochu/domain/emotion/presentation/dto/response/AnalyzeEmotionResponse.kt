@@ -1,6 +1,7 @@
 package team.hanseungil.nochu.domain.emotion.presentation.dto.response
 
 data class AnalyzeEmotionResponse(
+    val imageUrl: String,
     val emotions: Emotions,
     val emotion: String,
     val comment: String,
