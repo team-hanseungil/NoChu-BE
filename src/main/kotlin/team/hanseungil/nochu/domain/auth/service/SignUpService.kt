@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import team.hanseungil.nochu.domain.member.entity.Member
 import team.hanseungil.nochu.domain.member.repository.MemberJpaRepository
+import team.hanseungil.nochu.global.error.ErrorCode
+import team.hanseungil.nochu.global.error.GlobalException
 
 @Service
 class SignUpService(
@@ -13,6 +15,10 @@ class SignUpService(
 ) {
     @Transactional
     fun execute(nickname: String, password: String): Long {
+        if (memberJpaRepository.existsByNickname(nickname)){
+            throw GlobalException(ErrorCode.MEMBER_NICKNAME_ALREADY_EXISTS)
+        }
+
         val encodedPassword = passwordEncoder.encode(password)
         val member = Member(nickname = nickname, password = encodedPassword!!)
         val savedMember = memberJpaRepository.save(member)
