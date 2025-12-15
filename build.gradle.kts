@@ -38,7 +38,12 @@ dependencies {
 	testImplementation("io.kotest:kotest-assertions-core:5.8.0")
 	testImplementation("io.kotest:kotest-property:5.8.0")
 	testImplementation("io.mockk:mockk:1.13.8")
+	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.10.0")
+    implementation("org.springframework.boot:spring-boot-starter-webclient")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 }
 
 kotlin {
