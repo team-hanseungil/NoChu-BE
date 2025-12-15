@@ -15,7 +15,7 @@ class Member(
     @Column(name = "id", nullable = false)
     val id: Long = 0,
 
-    @Column(name = "nickname", nullable = false)
+    @Column(name = "nickname", nullable = false, unique = true)
     val nickname: String,
 
     @Column(name = "password", nullable = false)
