@@ -5,7 +5,7 @@ services:
       - 'MYSQL_DATABASE=nochu'
       - 'MYSQL_ROOT_PASSWORD=root'
       - 'MYSQL_USER=nochu'
-      - 'MYSQL_PASSWORD=nochu'
+      - 'MYSQL_PASSWORD=12345'
     ports:
       - '3306'
     volumes:
