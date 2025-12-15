@@ -38,3 +38,8 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### Custom ###
+src/main/resources/data.sql
+.env
+*.env
