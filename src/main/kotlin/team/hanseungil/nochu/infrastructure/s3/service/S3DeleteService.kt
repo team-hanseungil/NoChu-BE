@@ -1,4 +1,4 @@
-package team.hanseungil.nochu.global.s3.service
+package team.hanseungil.nochu.infrastructure.s3.service
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

@@ -1,4 +1,4 @@
-package team.hanseungil.nochu.global.s3.service
+package team.hanseungil.nochu.infrastructure.s3.service
 
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.*
