@@ -1,4 +1,4 @@
-package team.hanseungil.nochu.global.config
+package team.hanseungil.nochu.infrastructure.s3
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
