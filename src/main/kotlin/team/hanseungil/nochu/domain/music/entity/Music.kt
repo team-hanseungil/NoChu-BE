@@ -2,7 +2,7 @@ package team.hanseungil.nochu.domain.music.entity
 
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
-import team.hanseungil.nochu.domain.emotion.entity.Emotion
+import team.hanseungil.nochu.domain.playlist.entity.Playlist
 import java.time.LocalDateTime
 
 @Entity
@@ -10,6 +10,7 @@ import java.time.LocalDateTime
 class Music(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     val id: Long = 0,
 
     @Column(name = "title", nullable = false)
@@ -27,12 +28,21 @@ class Music(
     @Column(name = "duration_ms")
     val durationMs: Int? = null,
 
-    @Column(name = "spotify_id")
-    val spotifyId: String? = null,
+    @Column(name = "spotify_id", nullable = false)
+    val spotifyId: String,
+
+    @Column(name = "spotify_url", nullable = false)
+    val spotifyUrl: String,
+
+    @Column(name = "sort_order", nullable = false)
+    val sortOrder: Int = 0,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "emotion_id", nullable = false)
-    val emotion: Emotion,
+    @JoinColumn(name = "playlist_id", nullable = false)
+    val playlist: Playlist,
+
+    @Column(name = "image_url", nullable = false)
+    val imageUrl: String?
 ) {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
