@@ -7,17 +7,22 @@ import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.reactive.function.client.WebClient
 import team.hanseungil.nochu.domain.emotion.presentation.dto.response.AnalyzeEmotionResponse
+import team.hanseungil.nochu.infrastructure.webclient.emotion.properties.EmotionProperties
 
 @Component
 class EmotionWebClient(
-    private val webClient: WebClient,
+    private val webClientBuilder: WebClient.Builder,
+    private val emotionProperties: EmotionProperties
 ) {
     suspend fun analyzeEmotion(image: MultipartFile): AnalyzeEmotionResponse {
         val resource = object : ByteArrayResource(image.bytes) {
             override fun getFilename(): String = image.originalFilename ?: "image"
         }
 
-        return webClient.post()
+        return webClientBuilder
+            .baseUrl(emotionProperties.url)
+            .build()
+            .post()
             .uri("/api/ai/emotions")
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .bodyValue(
