@@ -55,4 +55,28 @@ class SignUpServiceTest : BehaviorSpec({
             }
         }
     }
+
+    Given("빈 닉네임이 주어졌을 때") {
+        val memberJpaRepository = mockk<MemberJpaRepository>()
+        val passwordEncoder = mockk<PasswordEncoder>()
+        val signUpService = SignUpService(memberJpaRepository, passwordEncoder)
+        
+        val nickname = ""
+        val password = "password123"
+        val encodedPassword = "encodedPassword"
+        val savedMember = Member(id = 1L, nickname = nickname, password = encodedPassword)
+
+        every { memberJpaRepository.existsByNickname(nickname) } returns false
+        every { passwordEncoder.encode(password) } returns encodedPassword
+        every { memberJpaRepository.save(any()) } returns savedMember
+
+        When("회원가입을 실행하면") {
+            val result = signUpService.execute(nickname, password)
+
+            Then("정상적으로 memberId를 반환한다") {
+                result shouldBe 1L
+                verify(exactly = 1) { memberJpaRepository.save(any()) }
+            }
+        }
+    }
 })

@@ -27,6 +27,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.springframework.boot:spring-boot-configuration-processor")
 	implementation(platform("software.amazon.awssdk:bom:2.20.56"))
 	implementation("software.amazon.awssdk:s3")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
@@ -44,6 +45,9 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.10.0")
     implementation("org.springframework.boot:spring-boot-starter-webclient")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("org.springframework.boot:spring-boot-starter-json")
+	runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.100.Final:osx-aarch_64")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")
 }
 
 kotlin {

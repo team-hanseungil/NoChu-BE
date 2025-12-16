@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
-import team.hanseungil.nochu.domain.emotion.mapper.EmotionMapMapper
+import team.hanseungil.nochu.domain.emotion.convert.EmotionMapConvert
 import java.time.LocalDateTime
 
 @Entity
@@ -20,11 +20,14 @@ class Emotion(
     val id: Long = 0,
 
     @Column(name = "emotions", nullable = false, columnDefinition = "json")
-    @Convert(converter = EmotionMapMapper::class)
+    @Convert(converter = EmotionMapConvert::class)
     val emotions: Map<String, Double>,
 
     @Column(name = "image_url", nullable = false)
     val imageUrl: String,
+
+    @Column(name = "emotion", nullable = false)
+    val emotion: String,
 
     @Column(name = "member_id", nullable = false)
     val memberId: Long,
