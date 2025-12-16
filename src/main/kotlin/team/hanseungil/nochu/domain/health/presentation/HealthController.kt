@@ -1,5 +1,6 @@
 package team.hanseungil.nochu.domain.health.presentation
 
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -8,5 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/health")
 class HealthController {
     @GetMapping("/check")
-    fun check() = "ok"
+    fun check(): ResponseEntity<String> {
+        return ResponseEntity.ok("ok")
+    }
 }

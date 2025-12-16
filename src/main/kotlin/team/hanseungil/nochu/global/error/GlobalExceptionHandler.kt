@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import java.time.LocalDateTime
 
 @RestControllerAdvice
@@ -74,6 +75,18 @@ class GlobalExceptionHandler {
             .body(ErrorResponse(
                 status = HttpStatus.BAD_REQUEST.value(),
                 message = message,
+                timestamp = LocalDateTime.now()
+            ))
+    }
+
+    @ExceptionHandler(WebClientResponseException::class)
+    fun handleWebClientException(ex: WebClientResponseException): ResponseEntity<ErrorResponse> {
+        logger.error("WebClient Error: ", ex)
+        return ResponseEntity
+            .status(HttpStatus.BAD_GATEWAY)
+            .body(ErrorResponse(
+                status = HttpStatus.BAD_GATEWAY.value(),
+                message = "외부 API 호출 중 오류가 발생했습니다",
                 timestamp = LocalDateTime.now()
             ))
     }

@@ -24,10 +24,6 @@ class AnalyzeEmotionService(
     private val transactionTemplate: TransactionTemplate,
 ) {
     suspend fun execute(memberId: Long, image: MultipartFile): AnalyzeEmotionResponse = coroutineScope {
-        if (!memberJpaRepository.existsById(memberId)) {
-            throw GlobalException(ErrorCode.MEMBER_NOT_FOUND)
-        }
-
         val analysisDeferred = async {
             emotionWebClient.analyzeEmotion(image)
         }
@@ -56,6 +52,7 @@ class AnalyzeEmotionService(
                 emotions = emotionsMap,
                 imageUrl = imageUrl,
                 memberId = member.id,
+                emotion = emotionAnalysisResponse.emotion,
             )
 
             emotionJpaRepository.save(emotion)
