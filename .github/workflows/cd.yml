@@ -5,16 +5,10 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  packages: write
-  pull-requests: write
-
 env:
   AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: no-repo
   EKS_CLUSTER_NAME: no-cluster
-  ARGOCD_APP_NAME: spring-server
   DEPLOYMENT_FILE: k8s/deployment.yaml
   SECRET_NAME: spring-server-secrets
 
@@ -31,7 +25,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
@@ -126,40 +120,12 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git reset --hard
-          git clean -fd
-          git fetch origin main
-          git rebase origin/main
           git add ${{ env.DEPLOYMENT_FILE }}
-          git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "Update image tag to ${{ steps.get-version.outputs.new_tag }}"
           git push
-
-      - name: Install ArgoCD CLI
-        run: |
-          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-          rm argocd-linux-amd64
-
-      - name: ArgoCD Login and Sync
-        env:
-          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
-          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
-        run: |
-          argocd app sync ${{ env.ARGOCD_APP_NAME }} \
-            --server $ARGOCD_SERVER \
-            --auth-token $ARGOCD_AUTH_TOKEN \
-            --insecure
-          
-          argocd app wait ${{ env.ARGOCD_APP_NAME }} \
-            --server $ARGOCD_SERVER \
-            --auth-token $ARGOCD_AUTH_TOKEN \
-            --insecure \
-            --timeout 300
 
       - name: Deployment Summary
         run: |
           echo "Deployment completed successfully!"
           echo "Image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.get-version.outputs.new_tag }}"
           echo "Secrets synced from AWS Secrets Manager"
-          echo "ArgoCD App: ${{ env.ARGOCD_APP_NAME }}"
