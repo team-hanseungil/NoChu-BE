@@ -126,6 +126,8 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git reset --hard
+          git clean -fd
           git fetch origin main
           git rebase origin/main
           git add ${{ env.DEPLOYMENT_FILE }}
