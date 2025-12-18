@@ -1,6 +1,6 @@
 package team.hanseungil.nochu.infrastructure.webclient.emotion.client
 
-import AnalyzeEmotionResponse
+import team.hanseungil.nochu.domain.emotion.presentation.dto.response.AnalyzeEmotionResponse
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.MediaType

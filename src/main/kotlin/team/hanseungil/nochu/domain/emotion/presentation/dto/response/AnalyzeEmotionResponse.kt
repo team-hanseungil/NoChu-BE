@@ -1,3 +1,5 @@
+package team.hanseungil.nochu.domain.emotion.presentation.dto.response
+
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class AnalyzeEmotionResponse(
@@ -8,10 +10,10 @@ data class AnalyzeEmotionResponse(
 ) {
     data class Emotions(
         @JsonProperty("행복")
-        val happiness: Double,
+        val happy: Double,
 
         @JsonProperty("당황")
-        val embarrassment: Double,
+        val surprise: Double,
 
         @JsonProperty("분노")
         val anger: Double,
@@ -23,6 +25,6 @@ data class AnalyzeEmotionResponse(
         val hurt: Double,
 
         @JsonProperty("슬픔")
-        val sadness: Double,
+        val sad: Double,
     )
 }
