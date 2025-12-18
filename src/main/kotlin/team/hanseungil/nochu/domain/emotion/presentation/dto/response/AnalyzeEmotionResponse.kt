@@ -1,4 +1,4 @@
-package team.hanseungil.nochu.domain.emotion.presentation.dto.response
+import com.fasterxml.jackson.annotation.JsonProperty
 
 data class AnalyzeEmotionResponse(
     val imageUrl: String,
@@ -7,11 +7,22 @@ data class AnalyzeEmotionResponse(
     val comment: String,
 ) {
     data class Emotions(
-        val happy: Double,
-        val surprise: Double,
+        @JsonProperty("행복")
+        val happiness: Double,
+
+        @JsonProperty("당황")
+        val embarrassment: Double,
+
+        @JsonProperty("분노")
         val anger: Double,
+
+        @JsonProperty("불안")
         val anxiety: Double,
+
+        @JsonProperty("상처")
         val hurt: Double,
-        val sad: Double,
+
+        @JsonProperty("슬픔")
+        val sadness: Double,
     )
 }
