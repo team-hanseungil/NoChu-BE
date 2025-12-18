@@ -12,6 +12,11 @@ env:
   DEPLOYMENT_FILE: k8s/deployment.yaml
   SECRET_NAME: spring-server-secrets
 
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
