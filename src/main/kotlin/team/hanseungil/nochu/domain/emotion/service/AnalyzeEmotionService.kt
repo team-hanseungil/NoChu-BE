@@ -36,12 +36,12 @@ class AnalyzeEmotionService(
         val imageUrl = uploadDeferred.await()
 
         val emotionsMap = mapOf(
-            "행복" to emotionAnalysisResponse.emotions.happy,
-            "당황" to emotionAnalysisResponse.emotions.surprise,
-            "분노" to emotionAnalysisResponse.emotions.anger,
-            "불안" to emotionAnalysisResponse.emotions.anxiety,
-            "상처" to emotionAnalysisResponse.emotions.hurt,
-            "슬픔" to emotionAnalysisResponse.emotions.sad,
+            "happy" to emotionAnalysisResponse.emotions.happy,
+            "surprise" to emotionAnalysisResponse.emotions.surprise,
+            "anger" to emotionAnalysisResponse.emotions.anger,
+            "anxiety" to emotionAnalysisResponse.emotions.anxiety,
+            "hurt" to emotionAnalysisResponse.emotions.hurt,
+            "sad" to emotionAnalysisResponse.emotions.sad,
         )
 
         transactionTemplate.executeWithoutResult {
