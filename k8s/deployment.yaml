@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: spring-server
-          image: 932169417000.dkr.ecr.ap-northeast-2.amazonaws.com/no-repo:v5
+          image: 932169417000.dkr.ecr.ap-northeast-2.amazonaws.com/no-repo:v2
           imagePullPolicy: Always
 
           ports:
@@ -45,7 +45,9 @@ spec:
             - name: AWS_BUCKET
               value: "nochu-bucket"
             - name: EMOTION_API_URL
-              value: ""
+              value: "http://gsmsv-1.yujun.kr:27570"
+            - name: MUSIC_API_URL
+              value: "http://gsmsv-1.yujun.kr:27570"
 
             - name: DB_PASSWORD
               valueFrom:
