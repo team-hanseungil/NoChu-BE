@@ -44,6 +44,10 @@ class AnalyzeEmotionService(
             "sad" to emotionAnalysisResponse.emotions.sad,
         )
 
+        if (emotionsMap.values.all { it == 0.0 }) {
+            throw GlobalException(ErrorCode.EMOTION_FACE_NOT_DETECTED)
+        }
+
         transactionTemplate.executeWithoutResult {
             val member = memberJpaRepository.findById(memberId)
                 .orElseThrow { GlobalException(ErrorCode.MEMBER_NOT_FOUND) }

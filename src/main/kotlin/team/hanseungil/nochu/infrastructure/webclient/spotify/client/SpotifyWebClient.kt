@@ -3,11 +3,15 @@ package team.hanseungil.nochu.infrastructure.webclient.spotify.client
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.awaitBody
+import team.hanseungil.nochu.global.error.ErrorCode
+import team.hanseungil.nochu.global.error.GlobalException
 import team.hanseungil.nochu.infrastructure.webclient.spotify.properties.SpotifyProperties
 import team.hanseungil.nochu.infrastructure.webclient.spotify.dto.response.SpotifyAuthResponse
 import team.hanseungil.nochu.infrastructure.webclient.spotify.dto.response.SpotifySearchResponse
 import java.util.Base64
+import java.util.concurrent.TimeoutException
 
 @Component
 class SpotifyWebClient(
@@ -29,31 +33,41 @@ class SpotifyWebClient(
 
         logger.info("Spotify API Request - keywords: '{}', offset: {}, limit: {}", normalized, offset, spotifyProperties.limit)
 
-        val response = webClientBuilder
-            .baseUrl(spotifyProperties.url)
-            .build()
-            .get()
-            .uri { uriBuilder ->
-                uriBuilder
-                    .path("/search")
-                    .queryParam("q", normalized)
-                    .queryParam("type", "track")
-                    .queryParam("limit", spotifyProperties.limit)
-                    .queryParam("offset", offset)
-                    .queryParam("market", "KR")
-                    .build()
-            }
-            .header("Authorization", "Bearer $token")
-            .retrieve()
-            .awaitBody<SpotifySearchResponse>()
+        return try {
+            val response = webClientBuilder
+                .baseUrl(spotifyProperties.url)
+                .build()
+                .get()
+                .uri { uriBuilder ->
+                    uriBuilder
+                        .path("/search")
+                        .queryParam("q", normalized)
+                        .queryParam("type", "track")
+                        .queryParam("limit", spotifyProperties.limit)
+                        .queryParam("offset", offset)
+                        .queryParam("market", "KR")
+                        .build()
+                }
+                .header("Authorization", "Bearer $token")
+                .retrieve()
+                .awaitBody<SpotifySearchResponse>()
 
-        logger.info("Spotify API Response - total tracks: {}, first track: {}", 
-            response.tracks.items.size,
-            response.tracks.items.firstOrNull()?.let { "${it.name} (${it.album.releaseDate})" } ?: "N/A"
-        )
+            logger.info("Spotify API Response - total tracks: {}, first track: {}", 
+                response.tracks.items.size,
+                response.tracks.items.firstOrNull()?.let { "${it.name} (${it.album.releaseDate})" } ?: "N/A"
+            )
 
-        logger.debug("Spotify API Response - {}", response)
-        return response
+            logger.debug("Spotify API Response - {}", response)
+            response
+        } catch (e: WebClientResponseException.BadRequest) {
+            throw GlobalException(ErrorCode.EXTERNAL_API_BAD_REQUEST)
+        } catch (e: WebClientResponseException) {
+            throw GlobalException(ErrorCode.EXTERNAL_API_ERROR)
+        } catch (e: TimeoutException) {
+            throw GlobalException(ErrorCode.EXTERNAL_API_TIMEOUT)
+        } catch (e: Exception) {
+            throw GlobalException(ErrorCode.EXTERNAL_API_ERROR)
+        }
     }
 
     private suspend fun getAccessToken(): String {
@@ -64,18 +78,28 @@ class SpotifyWebClient(
         val credentials = Base64.getEncoder()
             .encodeToString("${spotifyProperties.clientId}:${spotifyProperties.clientSecret}".toByteArray())
 
-        val response = webClientBuilder
-            .baseUrl("https://accounts.spotify.com")
-            .build()
-            .post()
-            .uri("/api/token")
-            .header("Authorization", "Basic $credentials")
-            .header("Content-Type", "application/x-www-form-urlencoded")
-            .bodyValue("grant_type=client_credentials")
-            .retrieve()
-            .awaitBody<SpotifyAuthResponse>()
+        return try {
+            val response = webClientBuilder
+                .baseUrl("https://accounts.spotify.com")
+                .build()
+                .post()
+                .uri("/api/token")
+                .header("Authorization", "Basic $credentials")
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .bodyValue("grant_type=client_credentials")
+                .retrieve()
+                .awaitBody<SpotifyAuthResponse>()
 
-        accessToken = response.accessToken
-        return response.accessToken
+            accessToken = response.accessToken
+            response.accessToken
+        } catch (e: WebClientResponseException.BadRequest) {
+            throw GlobalException(ErrorCode.EXTERNAL_API_BAD_REQUEST)
+        } catch (e: WebClientResponseException) {
+            throw GlobalException(ErrorCode.EXTERNAL_API_ERROR)
+        } catch (e: TimeoutException) {
+            throw GlobalException(ErrorCode.EXTERNAL_API_TIMEOUT)
+        } catch (e: Exception) {
+            throw GlobalException(ErrorCode.EXTERNAL_API_ERROR)
+        }
     }
 }
