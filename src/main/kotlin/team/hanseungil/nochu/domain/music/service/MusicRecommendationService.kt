@@ -72,6 +72,10 @@ class MusicRecommendationService(
             ),
         )
 
+        if (keywordResponse.keywords.isBlank()) {
+            throw GlobalException(ErrorCode.MUSIC_NOT_FOUND)
+        }
+
         val strictQuery = "${keywordResponse.keywords} year:${YEAR_FROM}-${YEAR_TO}"
 
         val picked = LinkedHashMap<String, SpotifySearchResponse.Track>()

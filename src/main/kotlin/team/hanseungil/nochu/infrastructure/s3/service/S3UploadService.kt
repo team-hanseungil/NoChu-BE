@@ -29,10 +29,15 @@ class S3UploadService(
             StringUtils.getFilenameExtension(originalFilename)
                 ?: throw GlobalException(ErrorCode.FILE_EXTENSION_NOT_FOUND)
         val storedFilename = generateStoredFilename(fileExtension)
-        return s3Client.putObject(PutObjectRequest.builder()
-            .bucket(bucket)
-            .key(storedFilename)
-            .build(), RequestBody.fromBytes(file.bytes)).toString()
+        
+        return try {
+            s3Client.putObject(PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(storedFilename)
+                .build(), RequestBody.fromBytes(file.bytes)).toString()
+        } catch (e: Exception) {
+            throw GlobalException(ErrorCode.S3_UPLOAD_FAILED)
+        }
     }
 
     private fun validateFile(file: MultipartFile) {

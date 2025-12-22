@@ -13,6 +13,7 @@ enum class ErrorCode(
     
     // Emotion
     EMOTION_NOT_FOUND("감정 정보를 찾을 수 없습니다.", 404),
+    EMOTION_FACE_NOT_DETECTED("사진 업로드는 얼굴 사진만 가능합니다.", 400),
     
     // Music
     MUSIC_NOT_FOUND("음악 정보를 찾을 수 없습니다.", 404),
@@ -25,5 +26,13 @@ enum class ErrorCode(
     FILE_NOT_FOUND("파일을 찾을 수 없습니다.", 404),
     FILE_EXTENSION_NOT_FOUND("파일 확장자를 찾을 수 없습니다.", 400),
     FILE_EXTENSION_NOT_ALLOWED("허용되지 않은 파일 확장자입니다.", 400),
+
+    // External API
+    EXTERNAL_API_ERROR("외부 API 호출에 실패했습니다.", 500),
+    EXTERNAL_API_TIMEOUT("외부 API 요청 시간이 초과되었습니다.", 504),
+    EXTERNAL_API_BAD_REQUEST("외부 API 요청이 잘못되었습니다.", 400),
+
+    // S3
+    S3_UPLOAD_FAILED("파일 업로드에 실패했습니다.", 500),
 
 }
