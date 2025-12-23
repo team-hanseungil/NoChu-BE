@@ -43,7 +43,12 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.10.0")
-    implementation("org.springframework.boot:spring-boot-starter-webclient")
+    implementation("org.springframework.boot:spring-boot-starter-webclient") {
+        exclude(group = "io.netty", module = "netty-codec-classes-quic")
+    }
+    implementation("io.projectreactor.netty:reactor-netty-http") {
+        exclude(group = "io.netty", module = "netty-codec-classes-quic")
+    }
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.springframework.boot:spring-boot-starter-json")
 	runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.100.Final:osx-aarch_64")
