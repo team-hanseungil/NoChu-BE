@@ -8,6 +8,7 @@ import kotlinx.coroutines.test.runTest
 import org.springframework.transaction.support.TransactionTemplate
 import org.springframework.web.multipart.MultipartFile
 import team.hanseungil.nochu.domain.emotion.entity.Emotion
+import team.hanseungil.nochu.domain.emotion.presentation.dto.Emotions
 import team.hanseungil.nochu.domain.emotion.presentation.dto.response.AnalyzeEmotionResponse
 import team.hanseungil.nochu.domain.emotion.repository.EmotionJpaRepository
 import team.hanseungil.nochu.domain.member.entity.Member
@@ -15,6 +16,7 @@ import team.hanseungil.nochu.domain.member.repository.MemberJpaRepository
 import team.hanseungil.nochu.global.error.ErrorCode
 import team.hanseungil.nochu.global.error.GlobalException
 import team.hanseungil.nochu.infrastructure.s3.service.S3UploadService
+import team.hanseungil.nochu.infrastructure.webclient.emotion.EmotionResponse
 import team.hanseungil.nochu.infrastructure.webclient.emotion.client.EmotionWebClient
 import java.util.*
 
@@ -38,11 +40,10 @@ class AnalyzeEmotionServiceTest : BehaviorSpec({
 
                     val memberId = 1L
                     val image = mockk<MultipartFile>()
-                    val response = AnalyzeEmotionResponse(
-                        emotions = AnalyzeEmotionResponse.Emotions(0.8, 0.1, 0.02, 0.03, 0.02, 0.03),
+                    val response = EmotionResponse(
+                        emotions = Emotions(0.8, 0.1, 0.02, 0.03, 0.02, 0.03),
                         emotion = "행복",
                         comment = "테스트",
-                        imageUrl = "https://s3.com/test.jpg"
                     )
 
                     val member = Member(id = memberId, nickname = "testUser", password = "password")
@@ -84,11 +85,10 @@ class AnalyzeEmotionServiceTest : BehaviorSpec({
                     )
 
                     val image = mockk<MultipartFile>()
-                    val response = AnalyzeEmotionResponse(
-                        emotions = AnalyzeEmotionResponse.Emotions(0.8, 0.1, 0.02, 0.03, 0.02, 0.03),
+                    val response = EmotionResponse(
+                        emotions = Emotions(0.8, 0.1, 0.02, 0.03, 0.02, 0.03),
                         emotion = "행복",
                         comment = "테스트",
-                        imageUrl = "https://s3.com/test.jpg"
                     )
                     
                     coEvery { emotionWebClient.analyzeEmotion(image) } returns response
