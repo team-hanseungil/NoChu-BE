@@ -68,7 +68,6 @@ class MusicRecommendationService(
                     hurt = latestEmotion.emotions["상처"] ?: 0.0,
                     sad = latestEmotion.emotions["슬픔"] ?: 0.0,
                 ),
-                emotion = latestEmotion.emotion,
             ),
         )
 
