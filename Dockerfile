@@ -3,7 +3,7 @@ FROM eclipse-temurin:24-jdk-alpine AS build
 WORKDIR /app
 
 # Install Gradle
-RUN apk add --no-cache gradle
+RUN apk add --no-cache gradle libgcc
 
 # Copy gradle files
 COPY build.gradle.kts settings.gradle.kts ./
@@ -18,6 +18,9 @@ RUN gradle build --no-daemon -x test
 # Runtime stage
 FROM eclipse-temurin:24-jre-alpine
 WORKDIR /app
+
+# Install runtime deps (required by netty-quiche)
+RUN apk add --no-cache libgcc
 
 # Create non-root user
 RUN addgroup -S spring && adduser -S spring -G spring
