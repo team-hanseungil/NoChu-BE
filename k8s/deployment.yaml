@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: spring-server
-          image: 932169417000.dkr.ecr.ap-northeast-2.amazonaws.com/no-repo:v5
+          image: 932169417000.dkr.ecr.ap-northeast-2.amazonaws.com/no-repo:v6
           imagePullPolicy: Always
 
           ports:
