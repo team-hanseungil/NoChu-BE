@@ -2,16 +2,16 @@ package team.hanseungil.nochu.infrastructure.s3.service
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 import org.springframework.util.StringUtils
+import org.springframework.web.multipart.MultipartFile
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import team.hanseungil.nochu.global.error.ErrorCode
 import team.hanseungil.nochu.global.error.GlobalException
-import java.util.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Service
 class S3UploadService(
@@ -29,12 +29,20 @@ class S3UploadService(
             StringUtils.getFilenameExtension(originalFilename)
                 ?: throw GlobalException(ErrorCode.FILE_EXTENSION_NOT_FOUND)
         val storedFilename = generateStoredFilename(fileExtension)
-        
+
         return try {
-            s3Client.putObject(PutObjectRequest.builder()
-                .bucket(bucket)
-                .key(storedFilename)
-                .build(), RequestBody.fromBytes(file.bytes)).toString()
+            s3Client.putObject(
+                PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(storedFilename)
+                    .contentType(file.contentType)
+                    .build(),
+                RequestBody.fromBytes(file.bytes),
+            )
+
+            s3Client.utilities()
+                .getUrl { it.bucket(bucket).key(storedFilename) }
+                .toExternalForm()
         } catch (e: Exception) {
             throw GlobalException(ErrorCode.S3_UPLOAD_FAILED)
         }
