@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: spring-server
-          image: 932169417000.dkr.ecr.ap-northeast-2.amazonaws.com/no-repo:v2
+          image: 932169417000.dkr.ecr.ap-northeast-2.amazonaws.com/no-repo:v5
           imagePullPolicy: Always
 
           ports:
@@ -64,3 +64,18 @@ spec:
                 secretKeyRef:
                   name: spring-server-secret
                   key: AWS_SECRET_KEY
+            - name: SPOTIFY_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: spring-server-secret
+                  key: SPOTIFY_API_URL
+            - name: SPOTIFY_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: spring-server-secret
+                  key: SPOTIFY_CLIENT_ID
+            - name: SPOTIFY_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: spring-server-secret
+                  key: SPOTIFY_CLIENT_SECRET
