@@ -1,6 +1,5 @@
 package team.hanseungil.nochu.infrastructure.webclient.emotion.client
 
-import team.hanseungil.nochu.domain.emotion.presentation.dto.response.AnalyzeEmotionResponse
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.MediaType
@@ -11,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import team.hanseungil.nochu.global.error.ErrorCode
 import team.hanseungil.nochu.global.error.GlobalException
+import team.hanseungil.nochu.infrastructure.webclient.emotion.EmotionResponse
 import team.hanseungil.nochu.infrastructure.webclient.emotion.properties.EmotionProperties
 import java.util.concurrent.TimeoutException
 
@@ -19,7 +19,7 @@ class EmotionWebClient(
     private val webClientBuilder: WebClient.Builder,
     private val emotionProperties: EmotionProperties,
 ) {
-    suspend fun analyzeEmotion(image: MultipartFile): AnalyzeEmotionResponse {
+    suspend fun analyzeEmotion(image: MultipartFile): EmotionResponse {
         val resource = object : ByteArrayResource(image.bytes) {
             override fun getFilename(): String = image.originalFilename ?: "image"
         }
@@ -37,7 +37,7 @@ class EmotionWebClient(
                     }
                 )
                 .retrieve()
-                .bodyToMono(AnalyzeEmotionResponse::class.java)
+                .bodyToMono(EmotionResponse::class.java)
                 .awaitSingle()
         } catch (e: WebClientResponseException.BadRequest) {
             throw GlobalException(ErrorCode.EXTERNAL_API_BAD_REQUEST)
