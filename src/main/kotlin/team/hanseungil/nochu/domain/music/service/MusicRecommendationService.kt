@@ -60,14 +60,13 @@ class MusicRecommendationService(
 
         val keywordResponse = musicWebClient.extractKeywords(
             request = MusicKeywordRequest(
-                emotions = MusicKeywordRequest.Emotions(
-                    happy = latestEmotion.emotions["행복"] ?: 0.0,
-                    surprise = latestEmotion.emotions["당황"] ?: 0.0,
-                    anger = latestEmotion.emotions["분노"] ?: 0.0,
-                    anxiety = latestEmotion.emotions["불안"] ?: 0.0,
-                    hurt = latestEmotion.emotions["상처"] ?: 0.0,
-                    sad = latestEmotion.emotions["슬픔"] ?: 0.0,
-                ),
+                happy = latestEmotion.emotions["행복"] ?: 0.0,
+                surprise = latestEmotion.emotions["당황"] ?: 0.0,
+                anger = latestEmotion.emotions["분노"] ?: 0.0,
+                anxiety = latestEmotion.emotions["불안"] ?: 0.0,
+                hurt = latestEmotion.emotions["상처"] ?: 0.0,
+                sad = latestEmotion.emotions["슬픔"] ?: 0.0,
+
             ),
         )
 
