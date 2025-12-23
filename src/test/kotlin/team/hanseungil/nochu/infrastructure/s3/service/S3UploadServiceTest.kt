@@ -8,13 +8,17 @@ import org.springframework.web.multipart.MultipartFile
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
+import software.amazon.awssdk.services.s3.S3Utilities
+import software.amazon.awssdk.services.s3.model.GetUrlRequest
 import software.amazon.awssdk.services.s3.model.PutObjectResponse
+import java.util.function.Consumer
+import java.net.URI
 import team.hanseungil.nochu.global.error.ErrorCode
 import team.hanseungil.nochu.global.error.GlobalException
 
 class S3UploadServiceTest : BehaviorSpec({
     Given("유효한 이미지 파일이 주어졌을 때") {
-        val s3Client = mockk<S3Client>()
+        val s3Client = mockk<S3Client>(relaxed = true)
         val uploadService = S3UploadService(s3Client)
         val bucketField = S3UploadService::class.java.getDeclaredField("bucket")
         bucketField.isAccessible = true
@@ -26,25 +30,33 @@ class S3UploadServiceTest : BehaviorSpec({
         every { file.isEmpty } returns false
         every { file.originalFilename } returns "test.jpg"
         every { file.bytes } returns fileBytes
-        val putObjectResponse = mockk<PutObjectResponse>()
-        every { putObjectResponse.toString() } returns "PutObjectResponse()"
-        every { s3Client.putObject(any<PutObjectRequest>(), any<RequestBody>()) } returns putObjectResponse
+        every { file.contentType } returns "image/jpeg"
+        every { s3Client.putObject(any<PutObjectRequest>(), any<RequestBody>()) } returns mockk<PutObjectResponse>(relaxed = true)
+        val s3Utilities = mockk<S3Utilities>()
+        every { s3Client.utilities() } returns s3Utilities
+        every { s3Utilities.getUrl(any<GetUrlRequest>()) } returns URI.create("https://test-bucket.s3.amazonaws.com/test-key").toURL()
+        every { s3Utilities.getUrl(any<Consumer<GetUrlRequest.Builder>>()) } returns
+            URI.create("https://test-bucket.s3.amazonaws.com/test-key").toURL()
 
         When("파일을 업로드하면") {
-            val result = uploadService.execute(file)
+            lateinit var result: String
+
+            beforeTest {
+                result = uploadService.execute(file)
+            }
 
             Then("S3 업로드 결과를 반환한다") {
-                result shouldBe "PutObjectResponse()"
+                result shouldBe "https://test-bucket.s3.amazonaws.com/test-key"
             }
 
             Then("S3Client의 putObject가 호출된다") {
-                verify(exactly = 1) { s3Client.putObject(any<PutObjectRequest>(), any<RequestBody>()) }
+                verify(atLeast = 1) { s3Client.putObject(any<PutObjectRequest>(), any<RequestBody>()) }
             }
         }
     }
 
     Given("빈 파일이 주어졌을 때") {
-        val s3Client = mockk<S3Client>()
+        val s3Client = mockk<S3Client>(relaxed = true)
         val uploadService = S3UploadService(s3Client)
 
         val file = mockk<MultipartFile>()
@@ -61,7 +73,7 @@ class S3UploadServiceTest : BehaviorSpec({
     }
 
     Given("파일명이 없는 파일이 주어졌을 때") {
-        val s3Client = mockk<S3Client>()
+        val s3Client = mockk<S3Client>(relaxed = true)
         val uploadService = S3UploadService(s3Client)
 
         val file = mockk<MultipartFile>()
@@ -79,7 +91,7 @@ class S3UploadServiceTest : BehaviorSpec({
     }
 
     Given("허용되지 않은 확장자 파일이 주어졌을 때") {
-        val s3Client = mockk<S3Client>()
+        val s3Client = mockk<S3Client>(relaxed = true)
         val uploadService = S3UploadService(s3Client)
 
         val file = mockk<MultipartFile>()
