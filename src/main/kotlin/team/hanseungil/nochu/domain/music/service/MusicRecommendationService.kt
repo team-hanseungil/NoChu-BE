@@ -31,6 +31,7 @@ class MusicRecommendationService(
     private val objectMapper: ObjectMapper,
     private val transactionTemplate: TransactionTemplate,
 ) {
+    private val log = org.slf4j.LoggerFactory.getLogger(MusicRecommendationService::class.java)
 
     companion object {
         private const val MIN_POPULARITY = 15
@@ -49,6 +50,7 @@ class MusicRecommendationService(
     }
 
     suspend fun execute(memberId: Long): PlaylistResponse = coroutineScope {
+        log.info("MusicRecommendation start memberId={}", memberId)
         val (startOfDay, endOfDay) = todayRange()
 
         val latestEmotion = emotionJpaRepository
@@ -57,6 +59,7 @@ class MusicRecommendationService(
                 startDate = startOfDay,
                 endDate = endOfDay,
             ) ?: throw GlobalException(ErrorCode.EMOTION_NOT_FOUND)
+        log.debug("Latest emotion fetched memberId={} emotionId={} createdAt={}", memberId, latestEmotion.id, latestEmotion.createdAt)
 
         val keywordResponse = musicWebClient.extractKeywords(
             request = MusicKeywordRequest(
@@ -69,8 +72,10 @@ class MusicRecommendationService(
 
             ),
         )
+        log.info("Keyword extracted memberId={} title='{}' keywords='{}'", memberId, keywordResponse.title, keywordResponse.keywords)
 
         if (keywordResponse.keywords.isBlank()) {
+            log.warn("Empty keywords memberId={}", memberId)
             throw GlobalException(ErrorCode.MUSIC_NOT_FOUND)
         }
 
@@ -83,6 +88,7 @@ class MusicRecommendationService(
             onlyPopular: Boolean,
             strictYearFilter: Boolean,
         ) {
+            log.debug("Collect start keywords='{}' onlyPopular={} strictYearFilter={}", keywords, onlyPopular, strictYearFilter)
             var offset = 0
             var emptyPages = 0
 
@@ -98,12 +104,16 @@ class MusicRecommendationService(
                     keywords = keywords,
                     offset = offset,
                 )
+                log.debug("Spotify search page offset={} returned={}", offset, response.tracks.items.size)
 
                 val items = response.tracks.items
 
                 if (items.isEmpty()) {
                     emptyPages += 1
-                    if (emptyPages >= 2) break
+                    if (emptyPages >= 2) {
+                        log.warn("Empty pages threshold reached keywords='{}' offset={}", keywords, offset)
+                        break
+                    }
                     offset += OFFSET_STEP
                     continue
                 }
@@ -130,6 +140,7 @@ class MusicRecommendationService(
             } else {
                 pool
             }
+            log.debug("Filtered tracks count={} onlyPopular={}", filtered.size, onlyPopular)
 
             for (t in filtered) {
                 if (picked.size >= MAX_TRACKS) break
@@ -149,10 +160,12 @@ class MusicRecommendationService(
                 collect(keywords = relaxedKeywords, onlyPopular = false, strictYearFilter = false)
             }
         }
+        log.info("Tracks picked count={}", picked.size)
 
         val finalItems = picked.values.take(MAX_TRACKS)
 
         if (finalItems.isEmpty()) {
+            log.error("No tracks selected after collection memberId={}", memberId)
             throw GlobalException(ErrorCode.MUSIC_NOT_FOUND)
         }
 
@@ -179,6 +192,7 @@ class MusicRecommendationService(
         imageUrl: String?,
         spotifyResponse: SpotifySearchResponse
     ): PlaylistResponse {
+        log.info("Saving playlist title='{}'", title)
         return transactionTemplate.execute {
             val playlist = playlistJpaRepository.save(
                 Playlist(
@@ -187,6 +201,7 @@ class MusicRecommendationService(
                     imageUrl = imageUrl
                 ),
             )
+            log.info("Playlist saved id={}", playlist.id)
 
             val musics = spotifyResponse.tracks.items.mapIndexed { index, track ->
                 Music(
@@ -205,6 +220,7 @@ class MusicRecommendationService(
             }
 
             val savedMusics = musicJpaRepository.saveAll(musics)
+            log.info("Musics saved count={}", savedMusics.size)
 
             val tracks = savedMusics
                 .sortedWith(compareBy<Music> { it.sortOrder }.thenBy { it.id })
