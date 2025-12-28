@@ -23,8 +23,8 @@ class FindEmotionsByMemberIdService(
 
         val emotions = emotionJpaRepository.findEmotionsByMemberId(memberId)
 
-        val confidences = emotions.mapNotNull { it.confidence } // null 방어
-        val dates = emotions.mapNotNull { it.date }            // null 방어
+        val confidences = emotions.mapNotNull { it.confidence }
+        val dates = emotions.mapNotNull { it.date }
 
         val totalRecords = emotions.size
         val averageConfidence = if (confidences.isNotEmpty()) {
@@ -36,7 +36,7 @@ class FindEmotionsByMemberIdService(
         val streak = calculateStreak(dates)
 
         val emotionDtos = emotions.mapNotNull { e ->
-            val date = e.date ?: return@mapNotNull null // date null이면 응답에서 제외 (또는 기본값 처리)
+            val date = e.date ?: return@mapNotNull null
             FindEmotionsByMemberIdResponse.EmotionDto(
                 id = e.id,
                 date = date.format(DateTimeFormatter.ISO_LOCAL_DATE),
