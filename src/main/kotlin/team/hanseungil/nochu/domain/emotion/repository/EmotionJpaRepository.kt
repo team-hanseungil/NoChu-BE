@@ -19,9 +19,17 @@ interface EmotionJpaRepository : JpaRepository<Emotion, Long> {
             e.id AS id,
             DATE(e.created_at) AS date,
             e.emotion AS emotion,
-            COALESCE(
-                CAST(JSON_EXTRACT(e.emotions, CONCAT('$."', e.emotion, '"')) * 100 AS SIGNED),
-                0
+            CAST(
+                (
+                    GREATEST(
+                        COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT(e.emotions, '$.sad')) AS DECIMAL(10,6)), 0),
+                        COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT(e.emotions, '$.hurt')) AS DECIMAL(10,6)), 0),
+                        COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT(e.emotions, '$.anger')) AS DECIMAL(10,6)), 0),
+                        COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT(e.emotions, '$.happy')) AS DECIMAL(10,6)), 0),
+                        COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT(e.emotions, '$.anxiety')) AS DECIMAL(10,6)), 0),
+                        COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT(e.emotions, '$.surprise')) AS DECIMAL(10,6)), 0)
+                    ) * 100
+                ) AS SIGNED
             ) AS confidence
         FROM tb_emotion e
         WHERE e.member_id = :memberId
