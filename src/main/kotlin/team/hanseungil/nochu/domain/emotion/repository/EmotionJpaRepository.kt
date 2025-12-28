@@ -13,15 +13,21 @@ interface EmotionJpaRepository : JpaRepository<Emotion, Long> {
         endDate: LocalDateTime
     ): Emotion?
 
-    @Query(value = """
-        SELECT e.id AS id,
-               DATE(e.created_at) AS date,
-               e.emotion AS emotion,
-               CAST(MAX(JSON_EXTRACT(e.emotions, CONCAT('$."', e.emotion, '"'))) * 100 AS SIGNED) AS confidence
+    @Query(
+        value = """
+        SELECT
+            e.id AS id,
+            DATE(e.created_at) AS date,
+            e.emotion AS emotion,
+            COALESCE(
+                CAST(JSON_EXTRACT(e.emotions, CONCAT('$."', e.emotion, '"')) * 100 AS SIGNED),
+                0
+            ) AS confidence
         FROM tb_emotion e
         WHERE e.member_id = :memberId
-        GROUP BY DATE(e.created_at), e.id, e.emotion
         ORDER BY e.created_at DESC
-    """, nativeQuery = true)
+    """,
+        nativeQuery = true
+    )
     fun findEmotionsByMemberId(@Param("memberId") memberId: Long): List<EmotionProjection>
 }

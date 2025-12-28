@@ -23,7 +23,7 @@ class FindEmotionsByMemberIdService(
 
         val emotions = emotionJpaRepository.findEmotionsByMemberId(memberId)
 
-        val confidences = emotions.mapNotNull { it.confidence }
+        val confidences = emotions.map { it.confidence ?: 0 }
         val dates = emotions.mapNotNull { it.date }
 
         val totalRecords = emotions.size
@@ -41,7 +41,7 @@ class FindEmotionsByMemberIdService(
                 id = e.id,
                 date = date.format(DateTimeFormatter.ISO_LOCAL_DATE),
                 emotion = e.emotion,
-                confidence = e.confidence ?: 0
+                confidence = (e.confidence ?: 0).toInt()
             )
         }
 
