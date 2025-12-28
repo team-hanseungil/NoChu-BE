@@ -23,21 +23,25 @@ class FindEmotionsByMemberIdService(
 
         val emotions = emotionJpaRepository.findEmotionsByMemberId(memberId)
 
+        val confidences = emotions.map { it.confidence ?: 0 }
+        val dates = emotions.mapNotNull { it.date }
+
         val totalRecords = emotions.size
-        val averageConfidence = if (emotions.isNotEmpty()) {
-            emotions.map { it.confidence }.average().toInt()
+        val averageConfidence = if (confidences.isNotEmpty()) {
+            confidences.average().toInt()
         } else {
             0
         }
 
-        val streak = calculateStreak(emotions.map { it.date })
+        val streak = calculateStreak(dates)
 
-        val emotionDtos = emotions.map {
+        val emotionDtos = emotions.mapNotNull { e ->
+            val date = e.date ?: return@mapNotNull null
             FindEmotionsByMemberIdResponse.EmotionDto(
-                id = it.id,
-                date = it.date.format(DateTimeFormatter.ISO_LOCAL_DATE),
-                emotion = it.emotion,
-                confidence = it.confidence
+                id = e.id,
+                date = date.format(DateTimeFormatter.ISO_LOCAL_DATE),
+                emotion = e.emotion,
+                confidence = (e.confidence ?: 0).toInt()
             )
         }
 

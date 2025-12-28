@@ -22,24 +22,24 @@ class FindEmotionsByMemberIdServiceTest : BehaviorSpec({
 
                 val memberId = 1L
                 val emotions = listOf(
-                    object : EmotionProjection {
-                        override val id = 1L
-                        override val date = LocalDate.now()
-                        override val emotion = "행복"
-                        override val confidence = 85
-                    },
-                    object : EmotionProjection {
-                        override val id = 2L
-                        override val date = LocalDate.now().minusDays(1)
-                        override val emotion = "즐거움"
-                        override val confidence = 90
-                    },
-                    object : EmotionProjection {
-                        override val id = 3L
-                        override val date = LocalDate.now().minusDays(2)
-                        override val emotion = "평온"
-                        override val confidence = 75
-                    }
+                    EmotionProjection(
+                        id = 1L,
+                        date = LocalDate.now(),
+                        emotion = "행복",
+                        confidence = 85L,
+                    ),
+                    EmotionProjection(
+                        id = 2L,
+                        date = LocalDate.now().minusDays(1),
+                        emotion = "즐거움",
+                        confidence = 90L,
+                    ),
+                    EmotionProjection(
+                        id = 3L,
+                        date = LocalDate.now().minusDays(2),
+                        emotion = "평온",
+                        confidence = 75L,
+                    ),
                 )
 
                 every { memberJpaRepository.existsById(memberId) } returns true
@@ -106,24 +106,24 @@ class FindEmotionsByMemberIdServiceTest : BehaviorSpec({
 
                 val memberId = 1L
                 val emotions = listOf(
-                    object : EmotionProjection {
-                        override val id = 1L
-                        override val date = LocalDate.now()
-                        override val emotion = "행복"
-                        override val confidence = 85
-                    },
-                    object : EmotionProjection {
-                        override val id = 2L
-                        override val date = LocalDate.now().minusDays(1)
-                        override val emotion = "즐거움"
-                        override val confidence = 90
-                    },
-                    object : EmotionProjection {
-                        override val id = 3L
-                        override val date = LocalDate.now().minusDays(5)
-                        override val emotion = "평온"
-                        override val confidence = 75
-                    }
+                    EmotionProjection(
+                        id = 1L,
+                        date = LocalDate.now(),
+                        emotion = "행복",
+                        confidence = 85L,
+                    ),
+                    EmotionProjection(
+                        id = 2L,
+                        date = LocalDate.now().minusDays(1),
+                        emotion = "즐거움",
+                        confidence = 90L,
+                    ),
+                    EmotionProjection(
+                        id = 3L,
+                        date = LocalDate.now().minusDays(5),
+                        emotion = "평온",
+                        confidence = 75L,
+                    ),
                 )
 
                 every { memberJpaRepository.existsById(memberId) } returns true
