@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.awaitBody
+import org.springframework.web.reactive.function.BodyInserters
 import team.hanseungil.nochu.global.error.ErrorCode
 import team.hanseungil.nochu.global.error.GlobalException
 import team.hanseungil.nochu.infrastructure.webclient.spotify.properties.SpotifyProperties
@@ -103,7 +104,7 @@ class SpotifyWebClient(
         logger.info(
             "Spotify API Response - total tracks: {}, first track: {}",
             response.tracks.items.size,
-            response.tracks.items.firstOrNull()?.let { "${'$'}{it.name} (${ '$' }{it.album.releaseDate})" } ?: "N/A"
+            response.tracks.items.firstOrNull()?.let { "${it.name} (${it.album.releaseDate})" } ?: "N/A"
         )
         logger.debug("Spotify API Response - {}", response)
         return response
@@ -135,7 +136,7 @@ class SpotifyWebClient(
             }
 
             val credentials = Base64.getEncoder()
-                .encodeToString("${'$'}{spotifyProperties.clientId}:${'$'}{spotifyProperties.clientSecret}".toByteArray())
+                .encodeToString("${spotifyProperties.clientId}:${spotifyProperties.clientSecret}".toByteArray())
 
             try {
                 val response = webClientBuilder
@@ -143,9 +144,9 @@ class SpotifyWebClient(
                     .build()
                     .post()
                     .uri("/api/token")
-                    .header("Authorization", "Basic ${'$'}credentials")
+                    .header("Authorization", "Basic $credentials")
                     .header("Content-Type", "application/x-www-form-urlencoded")
-                    .bodyValue("grant_type=client_credentials")
+                    .body(BodyInserters.fromFormData("grant_type", "client_credentials"))
                     .retrieve()
                     .awaitBody<SpotifyAuthResponse>()
 
