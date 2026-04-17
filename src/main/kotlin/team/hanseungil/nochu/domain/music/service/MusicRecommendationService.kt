@@ -7,7 +7,6 @@ import org.springframework.transaction.support.TransactionTemplate
 import team.hanseungil.nochu.domain.emotion.entity.Emotion
 import team.hanseungil.nochu.domain.emotion.repository.EmotionJpaRepository
 import team.hanseungil.nochu.domain.music.entity.Music
-import team.hanseungil.nochu.domain.music.presentation.dto.MusicRecommendationRequest
 import team.hanseungil.nochu.domain.music.repository.MusicJpaRepository
 import team.hanseungil.nochu.domain.playlist.entity.Playlist
 import team.hanseungil.nochu.domain.playlist.presentation.dto.response.PlaylistResponse
@@ -50,7 +49,7 @@ class MusicRecommendationService(
         private const val PAGES_TO_POOL = 10
     }
 
-    suspend fun execute(memberId: Long, request: MusicRecommendationRequest): PlaylistResponse = coroutineScope {
+    suspend fun execute(memberId: Long, comment: String? = null): PlaylistResponse = coroutineScope {
         log.info("MusicRecommendation start memberId={}", memberId)
         val (startOfDay, endOfDay) = todayRange()
 
@@ -70,7 +69,7 @@ class MusicRecommendationService(
                 anxiety = latestEmotion.emotions["불안"] ?: 0.0,
                 hurt = latestEmotion.emotions["상처"] ?: 0.0,
                 sad = latestEmotion.emotions["슬픔"] ?: 0.0,
-                comment = request.comment,
+                comment = comment,
             ),
         )
         log.info("Keyword extracted memberId={} title='{}' keywords='{}'", memberId, keywordResponse.title, keywordResponse.keywords)

@@ -39,9 +39,9 @@ class MusicController(
     suspend fun getRecommendations(
         @Parameter(description = "회원 ID", required = true)
         @PathVariable("memberId") memberId: Long,
-        @RequestBody request: MusicRecommendationRequest,
+        @RequestBody(required = false) request: MusicRecommendationRequest?,
     ): ResponseEntity<PlaylistResponse> {
-        val response = musicRecommendationService.execute(memberId, request)
+        val response = musicRecommendationService.execute(memberId, request?.comment)
         return ResponseEntity.ok().body(response)
     }
 }
