@@ -49,7 +49,7 @@ class MusicRecommendationService(
         private const val PAGES_TO_POOL = 10
     }
 
-    suspend fun execute(memberId: Long): PlaylistResponse = coroutineScope {
+    suspend fun execute(memberId: Long, comment: String? = null): PlaylistResponse = coroutineScope {
         log.info("MusicRecommendation start memberId={}", memberId)
         val (startOfDay, endOfDay) = todayRange()
 
@@ -69,7 +69,7 @@ class MusicRecommendationService(
                 anxiety = latestEmotion.emotions["불안"] ?: 0.0,
                 hurt = latestEmotion.emotions["상처"] ?: 0.0,
                 sad = latestEmotion.emotions["슬픔"] ?: 0.0,
-
+                comment = comment,
             ),
         )
         log.info("Keyword extracted memberId={} title='{}' keywords='{}'", memberId, keywordResponse.title, keywordResponse.keywords)
