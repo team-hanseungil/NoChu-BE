@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import team.hanseungil.nochu.domain.music.presentation.dto.MusicRecommendationRequest
 import team.hanseungil.nochu.domain.music.service.MusicRecommendationService
 import team.hanseungil.nochu.domain.playlist.presentation.dto.response.PlaylistResponse
 
@@ -37,9 +38,10 @@ class MusicController(
     @PostMapping("/{memberId}")
     suspend fun getRecommendations(
         @Parameter(description = "회원 ID", required = true)
-        @PathVariable("memberId") memberId: Long
+        @PathVariable("memberId") memberId: Long,
+        @RequestBody request: MusicRecommendationRequest,
     ): ResponseEntity<PlaylistResponse> {
-        val response = musicRecommendationService.execute(memberId)
+        val response = musicRecommendationService.execute(memberId, request)
         return ResponseEntity.ok().body(response)
     }
 }

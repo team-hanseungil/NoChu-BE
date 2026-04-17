@@ -7,4 +7,5 @@ data class MusicKeywordRequest(
     val anxiety: Double,
     val hurt: Double,
     val sad: Double,
+    val comment: String?,
 )
