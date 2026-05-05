@@ -10,6 +10,37 @@ services:
       - '3306:3306'
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  spring:
+    build: .
+    container_name: nochu-spring
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - '8080:8080'
+    environment:
+      - 'DB_HOST=mysql'
+      - 'DB_PORT=3306'
+      - 'DB_NAME=nochu'
+      - 'DB_USER=root'
+      - 'DB_PASSWORD=12345'
+      - 'DDL_AUTO=${DDL_AUTO:-none}'
+      - 'AWS_ACCESS_KEY=${AWS_ACCESS_KEY}'
+      - 'AWS_SECRET_KEY=${AWS_SECRET_KEY}'
+      - 'AWS_STATIC=${AWS_STATIC}'
+      - 'AWS_BUCKET=${AWS_BUCKET}'
+      - 'EMOTION_API_URL=${EMOTION_API_URL:-http://gsmsv-1.yujun.kr:27570}'
+      - 'MUSIC_API_URL=${MUSIC_API_URL:-http://gsmsv-1.yujun.kr:27570}'
+      - 'SPOTIFY_API_URL=${SPOTIFY_API_URL:-https://api.spotify.com/v1}'
+      - 'SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}'
+      - 'SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}'
+      - 'SPOTIFY_LIMIT=${SPOTIFY_LIMIT:-50}'
 
 volumes:
   mysql_data:

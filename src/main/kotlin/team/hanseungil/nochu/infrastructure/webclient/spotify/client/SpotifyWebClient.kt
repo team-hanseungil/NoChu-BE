@@ -6,15 +6,20 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.reactive.function.BodyInserters
+import reactor.netty.http.client.HttpClient
+import reactor.netty.resources.ConnectionProvider
+import io.netty.channel.ChannelOption
 import team.hanseungil.nochu.global.error.ErrorCode
 import team.hanseungil.nochu.global.error.GlobalException
 import team.hanseungil.nochu.infrastructure.webclient.spotify.properties.SpotifyProperties
 import team.hanseungil.nochu.infrastructure.webclient.spotify.dto.response.SpotifyAuthResponse
 import team.hanseungil.nochu.infrastructure.webclient.spotify.dto.response.SpotifySearchResponse
+import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import java.util.Base64
 import java.util.concurrent.TimeoutException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.time.Duration
 import java.time.Instant
 
 @Component
@@ -24,6 +29,31 @@ class SpotifyWebClient(
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(SpotifyWebClient::class.java)
+
+        private val connectionProvider = ConnectionProvider.builder("spotify")
+            .maxConnections(50)
+            .maxIdleTime(Duration.ofSeconds(45))
+            .maxLifeTime(Duration.ofSeconds(300))
+            .evictInBackground(Duration.ofSeconds(60))
+            .build()
+
+        private val httpClient = HttpClient.create(connectionProvider)
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5_000)
+            .responseTimeout(Duration.ofSeconds(10))
+
+        private val connector = ReactorClientHttpConnector(httpClient)
+    }
+
+    private val authWebClient: WebClient = webClientBuilder.clone()
+        .baseUrl("https://accounts.spotify.com")
+        .clientConnector(connector)
+        .build()
+
+    private val apiWebClient: WebClient by lazy {
+        webClientBuilder.clone()
+            .baseUrl(spotifyProperties.url)
+            .clientConnector(connector)
+            .build()
     }
 
     @Volatile private var accessToken: String? = null
@@ -66,9 +96,7 @@ class SpotifyWebClient(
     }
 
     private suspend fun doSearch(token: String, normalized: String, offset: Int): SpotifySearchResponse {
-        val response = webClientBuilder
-            .baseUrl(spotifyProperties.url)
-            .build()
+        val response = apiWebClient
             .get()
             .uri { uriBuilder ->
                 uriBuilder
@@ -139,9 +167,7 @@ class SpotifyWebClient(
                 .encodeToString("${spotifyProperties.clientId}:${spotifyProperties.clientSecret}".toByteArray())
 
             try {
-                val response = webClientBuilder
-                    .baseUrl("https://accounts.spotify.com")
-                    .build()
+                val response = authWebClient
                     .post()
                     .uri("/api/token")
                     .header("Authorization", "Basic $credentials")

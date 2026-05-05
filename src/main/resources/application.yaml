@@ -46,12 +46,13 @@ cloud:
 
 external:
   emotion:
-    url: ${EMOTION_API_URL:http://gsmsv-1.yujun.kr:27570}
+    url: ${EMOTION_API_URL:http://ssh.gsmsv.site:22118}
   music:
-    url: ${MUSIC_API_URL:http://gsmsv-1.yujun.kr:27570}
+    url: ${MUSIC_API_URL:http://ssh.gsmsv.site:22118}
   spotify:
     url: ${SPOTIFY_API_URL:https://api.spotify.com/v1}
     client-id: ${SPOTIFY_CLIENT_ID}
+
     client-secret: ${SPOTIFY_CLIENT_SECRET}
-    limit: ${SPOTIFY_LIMIT:50}
+    limit: ${SPOTIFY_LIMIT:10}
 
